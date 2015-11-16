@@ -55,7 +55,7 @@ public class CalendarSpringController {
         model.addAttribute("user", users.findOneByUsername(username));
         model.addAttribute("now", LocalDateTime.now());
 
-        return "home";
+        return "redirect:/";
     }
 
     @RequestMapping("/login")
@@ -67,23 +67,25 @@ public class CalendarSpringController {
             user.password = PasswordHash.createHash(password);
             users.save(user);
         }
-        else if (PasswordHash.validatePassword(password, user.password)) {
+        else if (!PasswordHash.validatePassword(password, user.password)) {
             throw new Exception("Wrong password.");
         }
 
         session.setAttribute("username", username);
 
+
         return "redirect:/";
     }
 
-    @RequestMapping("/addevent")
+    @RequestMapping("/add-event")
     public String addEvent(HttpSession session, String description, String date) throws Exception {
-        String username = (String) session.getAttribute("user");
+        String username = (String) session.getAttribute("username");
         if (username == null) {
             throw new Exception("Not logged in.");
         }
 
         Event e = new Event();
+        e.description = description;
         e.date = LocalDateTime.parse(date);
         e.user = users.findOneByUsername(username);
         events.save(e);

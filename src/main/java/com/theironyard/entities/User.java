@@ -21,7 +21,7 @@ public class User {
     public String password;
 
     @OneToMany(mappedBy = "user")
-    List<Event> events;
+    public List<Event> events;
 
     public User() {
 
